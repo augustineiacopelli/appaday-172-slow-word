@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="apple-touch-icon" href="https://augustineiacopelli.github.io/appaday/icons/172.png">
+<meta name="apple-mobile-web-app-title" content="Slow Word">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="manifest" href="https://augustineiacopelli.github.io/appaday/manifests/172.webmanifest">
+<script src="https://augustineiacopelli.github.io/appaday/save.js" defer></script>
+<title>Slow Word | AppADay 172</title>
+<meta name="description" content="A quiet lectio divina companion for the daily Mass readings, with four timed movements, soft chimes, and a journal of the words that stayed with you.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#100d17;--bg2:#17121f;--card:#1d1727;--card2:#251d31;--line:#352a45;
+  --accent:#6A4C93;--accent-hi:#8b6bb8;--accent-soft:#c9b6e6;
+  --gold:#e3b866;--gold-soft:#f1d9a6;--candle:#ffcf7a;
+  --text:#efe9f6;--muted:#a99db9;--danger:#e08a7e;
+  --lit:#2f6b47;
+  --serif:"EB Garamond",Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{min-height:100dvh;display:flex;flex-direction:column;
+  background:radial-gradient(110% 55% at 50% 0%,#241a33 0%,var(--bg) 62%) fixed,var(--bg);
+  color:var(--text);font-family:var(--sans);font-size:1.0625rem;line-height:1.55;
+  -webkit-text-size-adjust:100%;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+a{color:var(--accent-soft)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* header bar */
+.topbar{display:flex;align-items:center;gap:.6rem;padding:calc(.55rem + env(safe-area-inset-top)) .85rem .55rem;
+  background:rgba(14,11,20,.86);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5;
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.badge{background:var(--accent);color:#fff;font-weight:700;font-size:.85rem;padding:.25rem .55rem;border-radius:.5rem;letter-spacing:.04em}
+.topbar h1{font-family:var(--serif);font-weight:500;font-size:1.3rem;margin:0;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.home{display:inline-flex;align-items:center;min-height:44px;padding:0 .4rem;font-size:.9rem;text-decoration:none}
+.icon-btn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:.75rem;
+  background:transparent;border:1px solid transparent;cursor:pointer;color:var(--accent-soft)}
+.icon-btn:hover{border-color:var(--line)}
+.icon-btn svg{width:22px;height:22px}
+
+/* nav tabs */
+.tabs{display:flex;gap:.4rem;padding:.6rem .85rem 0;max-width:42rem;margin:0 auto;width:100%}
+.tab{flex:1;min-height:44px;border-radius:.75rem;border:1px solid var(--line);background:var(--bg2);color:var(--muted);
+  font-weight:600;font-size:.95rem;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--card2);color:var(--text);border-color:var(--accent)}
+body.in-session .tabs{display:none}
+
+main{flex:1;width:100%;max-width:42rem;margin:0 auto;padding:1rem .85rem 2rem}
+.screen[hidden]{display:none}
+
+/* cards and type */
+.card{background:linear-gradient(180deg,var(--card) 0%,var(--bg2) 100%);border:1px solid var(--line);border-radius:1.1rem;padding:1.1rem}
+.card + .card{margin-top:.9rem}
+.eyebrow{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 .25rem}
+.dayname{font-family:var(--serif);font-size:1.45rem;line-height:1.25;margin:0 0 .35rem;color:var(--gold-soft)}
+.meta-row{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .9rem;color:var(--muted);font-size:.9rem}
+.dot{display:inline-block;width:.7rem;height:.7rem;border-radius:50%;background:var(--lit);box-shadow:0 0 0 2px rgba(255,255,255,.12);vertical-align:-.05rem;margin-right:.35rem}
+.datebar{display:flex;align-items:center;gap:.4rem;margin:0 0 .9rem}
+.datebar .lbl{flex:1;text-align:center;font-weight:600}
+.datebar .lbl small{display:block;font-weight:400;color:var(--muted);font-size:.8rem}
+.chips{display:flex;flex-wrap:wrap;gap:.45rem;margin:.9rem 0 .2rem}
+.chip{min-height:44px;padding:0 .9rem;border-radius:999px;border:1px solid var(--line);background:var(--bg2);color:var(--muted);cursor:pointer;font-size:.92rem}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.chip small{opacity:.8;margin-left:.3rem}
+.cite{font-weight:700;color:var(--accent-soft);margin:.9rem 0 .4rem;font-size:.95rem;letter-spacing:.02em}
+.passage{font-family:var(--serif);font-size:1.28rem;line-height:1.65;color:var(--text)}
+.passage.preview{max-height:15.5rem;overflow:hidden;-webkit-mask-image:linear-gradient(180deg,#000 70%,transparent);mask-image:linear-gradient(180deg,#000 70%,transparent)}
+.passage sup{font-family:var(--sans);font-size:.6em;color:var(--muted);margin-right:.15em;vertical-align:.45em}
+.passage .w{cursor:pointer;border-radius:.25em;padding:0 .04em;transition:background .2s,color .2s}
+.passage .w.sel{background:rgba(227,184,102,.28);color:var(--candle);box-shadow:0 0 0 2px rgba(227,184,102,.18)}
+.note{color:var(--muted);font-size:.9rem;margin:.6rem 0 0}
+.status{border-left:3px solid var(--gold);padding:.55rem .8rem;background:rgba(227,184,102,.08);border-radius:.4rem;color:var(--gold-soft);font-size:.92rem;margin:.8rem 0 0}
+.status.err{border-color:var(--danger);background:rgba(224,138,126,.08);color:#f2c2ba}
+.skeleton{height:1rem;border-radius:.4rem;background:linear-gradient(90deg,var(--card2),#2f2540,var(--card2));background-size:200% 100%;animation:sh 1.4s infinite;margin:.55rem 0}
+@keyframes sh{to{background-position:-200% 0}}
+.plan{display:grid;grid-template-columns:repeat(4,1fr);gap:.4rem;margin:.2rem 0 1rem}
+.plan div{background:var(--bg2);border:1px solid var(--line);border-radius:.7rem;padding:.5rem .3rem;text-align:center}
+.plan b{display:block;font-family:var(--serif);font-weight:500;font-size:1.05rem;color:var(--gold-soft)}
+.plan span{font-size:.75rem;color:var(--muted)}
+.invocation{font-family:var(--serif);font-style:italic;color:var(--muted);text-align:center;margin:.2rem 0 .9rem;font-size:1.08rem}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;min-height:48px;padding:0 1.15rem;border-radius:.85rem;
+  border:1px solid var(--accent);background:var(--accent);color:#fff;font-weight:650;cursor:pointer;text-decoration:none;font-size:1rem}
+.btn:hover{background:var(--accent-hi)}
+.btn.ghost{background:transparent;color:var(--accent-soft);border-color:var(--line)}
+.btn.ghost:hover{border-color:var(--accent-soft)}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:#22180a}
+.btn.danger{background:transparent;border-color:var(--danger);color:var(--danger)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.block{width:100%}
+.row{display:flex;gap:.6rem;flex-wrap:wrap}
+.row > .btn{flex:1 1 9rem}
+.linkish{background:none;border:0;color:var(--accent-soft);text-decoration:underline;cursor:pointer;min-height:44px;padding:0 .35rem;font-size:.92rem}
+
+/* prayer session */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:.35rem;margin:0 0 1rem}
+.step{text-align:center;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding-top:.55rem;border-top:3px solid var(--line);transition:color .4s,border-color .4s}
+.step.done{border-color:var(--accent);color:var(--accent-soft)}
+.step.now{border-color:var(--gold);color:var(--gold-soft)}
+.mv-name{font-family:var(--serif);font-size:2rem;line-height:1.1;margin:0;text-align:center;color:var(--gold-soft)}
+.mv-latin{text-align:center;color:var(--muted);font-style:italic;font-family:var(--serif);margin:.15rem 0 .6rem}
+.mv-prompt{text-align:center;max-width:30rem;margin:0 auto 1rem;color:var(--text);font-size:1rem}
+.ring-wrap{position:relative;width:min(58vw,13.5rem);aspect-ratio:1;margin:0 auto 1rem}
+.ring-wrap svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:var(--line);stroke-width:6}
+.ring-fg{fill:none;stroke:var(--gold);stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset .25s linear}
+.ring-time{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-time b{font-family:var(--serif);font-weight:400;font-size:2.6rem;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.ring-time span{font-size:.78rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.held{font-family:var(--serif);font-size:1.6rem;text-align:center;color:var(--candle);margin:.2rem 0 1rem;min-height:1.6rem}
+.held.empty{font-size:1rem;color:var(--muted);font-style:italic}
+.sess-passage{margin-bottom:1rem}
+.sess-passage .cite{margin-top:0}
+.tap-hint{color:var(--muted);font-size:.85rem;text-align:center;margin:.3rem 0 0}
+.sess-ctrl{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap}
+.sess-ctrl .btn{flex:1 1 7rem;max-width:12rem}
+body.rest .sess-passage,body.rest .mv-prompt{opacity:.25;transition:opacity 2s}
+body.rest main{transition:filter 2s}
+body.rest #screen-pray .card{border-color:transparent;background:transparent}
+.fade-in{animation:fi .8s ease}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.wl{font-size:.78rem;color:var(--muted);text-align:center;margin:.8rem 0 0}
+
+/* save */
+label.f{display:block;font-size:.85rem;color:var(--muted);margin:.9rem 0 .3rem;letter-spacing:.02em}
+input[type=text],textarea,select,input[type=number]{width:100%;min-height:48px;padding:.6rem .8rem;border-radius:.75rem;border:1px solid var(--line);
+  background:#0f0b15;color:var(--text);font-size:1rem}
+textarea{min-height:5.5rem;resize:vertical;line-height:1.45}
+#word-input{font-family:var(--serif);font-size:1.35rem;color:var(--candle)}
+.counter{font-size:.78rem;color:var(--muted);text-align:right;margin-top:.2rem}
+
+/* history */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:.45rem;margin-bottom:.9rem}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:.9rem;padding:.7rem .4rem;text-align:center}
+.stat b{display:block;font-family:var(--serif);font-weight:500;font-size:1.65rem;line-height:1.1;color:var(--gold-soft)}
+.stat span{font-size:.72rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.week{display:flex;justify-content:space-between;gap:.25rem;margin:0 0 1rem}
+.week div{flex:1;text-align:center;font-size:.7rem;color:var(--muted)}
+.week i{display:block;margin:0 auto .25rem;width:1.65rem;height:1.65rem;border-radius:50%;border:1px solid var(--line);background:var(--bg2)}
+.week i.on{background:radial-gradient(circle at 50% 40%,var(--candle),var(--gold) 55%,#9a6f22);border-color:var(--gold);box-shadow:0 0 10px rgba(255,207,122,.35)}
+.week .today i{outline:2px solid var(--accent);outline-offset:2px}
+.entry{border-top:1px solid var(--line);padding:.85rem 0}
+.entry:first-of-type{border-top:0;padding-top:.2rem}
+.entry .when{font-size:.78rem;color:var(--muted);letter-spacing:.04em}
+.entry .word{font-family:var(--serif);font-size:1.45rem;color:var(--candle);margin:.1rem 0}
+.entry .word.none{color:var(--muted);font-style:italic;font-size:1.05rem}
+.entry .ref{font-size:.88rem;color:var(--accent-soft)}
+.entry .enote{font-family:var(--serif);font-size:1.05rem;color:var(--text);margin:.35rem 0 0;white-space:pre-wrap}
+.entry .acts{display:flex;justify-content:flex-end}
+.empty-state{text-align:center;color:var(--muted);font-family:var(--serif);font-size:1.15rem;padding:1.5rem .5rem}
+
+/* modals */
+.modal{position:fixed;inset:0;background:rgba(6,4,10,.74);display:flex;align-items:center;justify-content:center;padding:1rem;z-index:20}
+.modal[hidden]{display:none}
+#confirm{z-index:30}
+.modal .box{background:var(--card2);border:1px solid var(--line);border-radius:1.1rem;padding:1.15rem;width:100%;max-width:28rem;max-height:88dvh;overflow-y:auto}
+.modal h2{font-family:var(--serif);font-weight:500;font-size:1.45rem;margin:0 0 .4rem;color:var(--gold-soft)}
+.modal h3{font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:1.2rem 0 .4rem;border-top:1px solid var(--line);padding-top:1rem}
+.modal p{margin:0 0 .6rem}
+.durs{display:grid;grid-template-columns:1fr 1fr;gap:.55rem}
+.dur{background:var(--bg2);border:1px solid var(--line);border-radius:.8rem;padding:.55rem .6rem}
+.dur .nm{font-size:.82rem;color:var(--muted)}
+.stepper{display:flex;align-items:center;justify-content:space-between;gap:.3rem;margin-top:.2rem}
+.stepper button{width:44px;height:44px;border-radius:.6rem;border:1px solid var(--line);background:var(--card);cursor:pointer;font-size:1.25rem}
+.stepper output{font-family:var(--serif);font-size:1.3rem;min-width:3.2rem;text-align:center}
+.presets{display:flex;gap:.4rem;flex-wrap:wrap;margin:.6rem 0 0}
+.toggle{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:48px}
+.toggle input{width:1.5rem;height:1.5rem;accent-color:var(--accent)}
+.mfoot{display:flex;gap:.5rem;justify-content:flex-end;margin-top:1.1rem}
+.mfoot .btn{flex:1}
+.small{font-size:.85rem;color:var(--muted)}
+.vis-hide{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.toast{position:fixed;left:50%;bottom:calc(1rem + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(calc(100% + 3rem));visibility:hidden;background:var(--card2);border:1px solid var(--accent);
+  color:var(--text);padding:.7rem 1rem;border-radius:.8rem;z-index:40;transition:transform .3s;max-width:calc(100vw - 2rem);font-size:.95rem}
+.toast.show{transform:translateX(-50%) translateY(0);visibility:visible}
+
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:1rem 1rem calc(1rem + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
+footer a{display:inline-flex;align-items:center;min-height:44px;padding:0 .5rem}
+body.in-session footer{display:none}
+
+@media (min-width:640px){
+  .passage{font-size:1.38rem}
+  .mv-name{font-size:2.4rem}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <span class="badge">172</span>
+  <h1>Slow Word</h1>
+  <a class="home" href="https://augustineiacopelli.github.io/appaday/">AppADay</a>
+  <button type="button" class="icon-btn" id="gear" aria-label="Settings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+  </button>
+</header>
+
+<nav class="tabs" role="tablist" aria-label="Sections">
+  <button type="button" class="tab" role="tab" id="tab-today" aria-selected="true" aria-controls="screen-today">Today</button>
+  <button type="button" class="tab" role="tab" id="tab-journal" aria-selected="false" aria-controls="screen-journal">Journal</button>
+</nav>
+
+<main>
+  <!-- Screen 1: Today -->
+  <section class="screen" id="screen-today" role="tabpanel" aria-labelledby="tab-today">
+    <div class="datebar">
+      <button type="button" class="icon-btn" id="day-prev" aria-label="Previous day"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="lbl" id="date-label" aria-live="polite">Today</div>
+      <button type="button" class="icon-btn" id="day-next" aria-label="Next day"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
+    </div>
+    <div class="card" id="today-card">
+      <p class="eyebrow" id="season-line"><span class="dot" id="lit-dot"></span><span id="season-text">Loading the day</span></p>
+      <h2 class="dayname" id="day-name">&nbsp;</h2>
+      <div class="chips" id="reading-chips" role="group" aria-label="Choose a reading"></div>
+      <div id="passage-area" aria-live="polite">
+        <div class="skeleton" style="width:40%"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton" style="width:80%"></div>
+      </div>
+    </div>
+    <div class="card">
+      <p class="invocation">Come, Holy Spirit, open my heart to your word.</p>
+      <div class="plan" id="plan-strip"></div>
+      <button type="button" class="btn gold block" id="begin-btn" disabled>Begin lectio divina</button>
+      <p class="note" id="streak-note"></p>
+    </div>
+  </section>
+
+  <!-- Screen 2: Pray -->
+  <section class="screen" id="screen-pray" hidden>
+    <div class="steps" id="steps">
+      <div class="step">Read</div><div class="step">Reflect</div><div class="step">Respond</div><div class="step">Rest</div>
+    </div>
+    <div class="card">
+      <h2 class="mv-name" id="mv-name">Lectio</h2>
+      <p class="mv-latin" id="mv-latin">Read</p>
+      <p class="mv-prompt" id="mv-prompt"></p>
+      <div class="ring-wrap" aria-hidden="true">
+        <svg viewBox="0 0 120 120"><circle class="ring-bg" cx="60" cy="60" r="54"/><circle class="ring-fg" id="ring" cx="60" cy="60" r="54" stroke-dasharray="339.292" stroke-dashoffset="0"/></svg>
+        <div class="ring-time"><b id="clock">0:00</b><span id="clock-sub">remaining</span></div>
+      </div>
+      <p class="vis-hide" id="sr-time" aria-live="polite"></p>
+      <div class="held empty" id="held">Tap a word that stays with you</div>
+      <div class="sess-passage" id="sess-passage"></div>
+      <div class="sess-ctrl">
+        <button type="button" class="btn ghost" id="pause-btn">Pause</button>
+        <button type="button" class="btn" id="next-btn">Next</button>
+        <button type="button" class="btn ghost" id="end-btn">End</button>
+      </div>
+      <p class="wl" id="wl-note"></p>
+    </div>
+  </section>
+
+  <!-- Screen 3: Save -->
+  <section class="screen" id="screen-save" hidden>
+    <div class="card">
+      <p class="eyebrow">Amen</p>
+      <h2 class="dayname">The word that stayed with you</h2>
+      <p class="small" id="save-summary"></p>
+      <label class="f" for="word-input">Word or phrase</label>
+      <input type="text" id="word-input" maxlength="80" autocomplete="off" placeholder="Be still">
+      <div class="counter"><span id="word-count">0</span> / 80</div>
+      <label class="f" for="note-input">A line to carry into the day (optional)</label>
+      <textarea id="note-input" maxlength="500" placeholder="A prayer, a resolution, or what you noticed"></textarea>
+      <div class="counter"><span id="note-count">0</span> / 500</div>
+      <div class="row" style="margin-top:1rem">
+        <button type="button" class="btn ghost" id="skip-save">Save without a word</button>
+        <button type="button" class="btn gold" id="do-save">Save to journal</button>
+      </div>
+      <p class="small" style="margin-top:.8rem">Tap words in the passage below to fill the field.</p>
+      <div class="passage" id="save-passage" style="font-size:1.12rem"></div>
+    </div>
+  </section>
+
+  <!-- Screen 4: Journal -->
+  <section class="screen" id="screen-journal" role="tabpanel" aria-labelledby="tab-journal" hidden>
+    <div class="stats">
+      <div class="stat"><b id="st-streak">0</b><span>Streak</span></div>
+      <div class="stat"><b id="st-best">0</b><span>Best</span></div>
+      <div class="stat"><b id="st-total">0</b><span>Sessions</span></div>
+      <div class="stat"><b id="st-min">0</b><span>Minutes</span></div>
+    </div>
+    <div class="week" id="week" aria-label="Last seven days"></div>
+    <div class="card" id="journal-list"></div>
+  </section>
+</main>
+
+<footer>
+  <a href="https://augustineiacopelli.github.io/appaday/">AppADay portfolio</a>
+</footer>
+
+<!-- Settings modal -->
+<div class="modal" id="settings" role="dialog" aria-modal="true" aria-labelledby="settings-title" hidden>
+  <div class="box">
+    <h2 id="settings-title">Settings</h2>
+    <h3 style="border-top:0;padding-top:0;margin-top:.4rem">Movement lengths (minutes)</h3>
+    <div class="durs" id="durs"></div>
+    <div class="presets">
+      <button type="button" class="chip" data-preset="2,3,3,2">Short 10</button>
+      <button type="button" class="chip" data-preset="3,5,4,3">Standard 15</button>
+      <button type="button" class="chip" data-preset="5,8,7,10">Long 30</button>
+    </div>
+    <h3>Scripture</h3>
+    <label class="f" for="set-trans" style="margin-top:0">Translation for the readings</label>
+    <select id="set-trans">
+      <option value="dra">Douay-Rheims (Catholic)</option>
+      <option value="web">World English Bible (modern)</option>
+    </select>
+    <label class="f" for="set-reading">Reading to open by default</label>
+    <select id="set-reading">
+      <option value="gospel">Gospel</option>
+      <option value="firstReading">First Reading</option>
+      <option value="psalm">Responsorial Psalm</option>
+      <option value="secondReading">Second Reading (Sundays and feasts)</option>
+    </select>
+    <h3>Sound and screen</h3>
+    <div class="toggle"><label for="set-chime">Chime between movements</label><input type="checkbox" id="set-chime"></div>
+    <label class="f" for="set-vol" style="margin-top:.2rem">Chime volume</label>
+    <input type="range" id="set-vol" min="0.1" max="1" step="0.1" style="width:100%;min-height:44px;accent-color:#e3b866">
+    <button type="button" class="btn ghost block" id="test-chime" style="margin-top:.3rem">Play a test chime</button>
+    <div class="toggle"><label for="set-vibrate">Vibrate on change (Android)</label><input type="checkbox" id="set-vibrate"></div>
+    <div class="toggle"><label for="set-wake">Keep the screen awake while praying</label><input type="checkbox" id="set-wake"></div>
+    <div class="toggle"><label for="set-auto">Move on automatically when time ends</label><input type="checkbox" id="set-auto"></div>
+    <h3>Your journal</h3>
+    <p class="small">Everything stays on this device. A backup file restores it on a new phone or after clearing browser data.</p>
+    <div class="row">
+      <button type="button" class="btn ghost" id="export-btn">Download backup</button>
+      <button type="button" class="btn ghost" id="import-btn">Restore backup</button>
+    </div>
+    <input type="file" id="import-file" accept="application/json,.json" hidden>
+    <button type="button" class="btn danger block" id="erase-btn" style="margin-top:.6rem">Erase all data</button>
+    <div class="mfoot"><button type="button" class="btn" id="settings-done">Done</button></div>
+  </div>
+</div>
+
+<!-- Confirm modal -->
+<div class="modal" id="confirm" role="dialog" aria-modal="true" aria-labelledby="confirm-msg" hidden>
+  <div class="box">
+    <p id="confirm-msg"></p>
+    <div class="mfoot">
+      <button type="button" class="btn ghost" id="confirm-cancel">Cancel</button>
+      <button type="button" class="btn" id="confirm-ok">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+'use strict';
+
+/* ============ constants ============ */
+var STORE_KEY = 'appaday172_slowword';
+var CACHE_KEY = 'appaday172_cache';
+var SESSION_KEY = 'appaday172_session';
+var READINGS_API = 'https://cpbjr.github.io/catholic-readings-api/';
+var BIBLE_API = 'https://bible-api.com/';
+var MOVES = [
+  { key:'lectio', name:'Lectio', en:'Read', prompt:'Read the passage slowly, aloud if you can. Let a word or phrase catch you. Tap it.' },
+  { key:'meditatio', name:'Meditatio', en:'Reflect', prompt:'Read it once more. Stay with the word that caught you. What is God saying to you through it today?' },
+  { key:'oratio', name:'Oratio', en:'Respond', prompt:'Speak to God about what you heard: thanks, sorrow, a request, or simply praise.' },
+  { key:'contemplatio', name:'Contemplatio', en:'Rest', prompt:'Let the words go. Rest quietly in God who is with you. Nothing to do, only to be.' }
+];
+var READING_LABELS = { gospel:'Gospel', firstReading:'First Reading', psalm:'Psalm', secondReading:'Second Reading' };
+var READING_ORDER = ['firstReading','psalm','secondReading','gospel'];
+var LIT_COLORS = { green:['#2f6b47','Green'], violet:['#6b3f9a','Violet'], white:['#e8dfc4','White'], red:['#a3262d','Red'], rose:['#d58aa0','Rose'] };
+var DEFAULTS = { durs:[3,5,4,3], trans:'dra', reading:'gospel', chime:true, vol:0.6, vibrate:true, wake:true, auto:true };
+
+/* 50 public domain verses (World English Bible) for offline days */
+var VERSES = [{"ref":"Psalm 23:1-3","text":"The LORD is my shepherd: I shall lack nothing. He makes me lie down in green pastures. He leads me beside still waters. He restores my soul. He guides me in the paths of righteousness for his name's sake."},{"ref":"Psalm 46:10","text":"\"Be still, and know that I am God. I will be exalted among the nations. I will be exalted in the earth.\""},{"ref":"Psalm 27:1","text":"The LORD is my light and my salvation. Whom shall I fear? The LORD is the strength of my life. Of whom shall I be afraid?"},{"ref":"Psalm 27:4","text":"One thing I have asked of the LORD, that I will seek after: that I may dwell in the LORD's house all the days of my life, to see the LORD's beauty, and to inquire in his temple."},{"ref":"Psalm 34:8","text":"Oh taste and see that the LORD is good. Blessed is the man who takes refuge in him."},{"ref":"Psalm 42:1-2","text":"As the deer pants for the water brooks, so my soul pants after you, God. My soul thirsts for God, for the living God. When shall I come and appear before God?"},{"ref":"Psalm 62:1-2","text":"My soul rests in God alone. My salvation is from him. He alone is my rock, my salvation, and my fortress. I will never be greatly shaken."},{"ref":"Psalm 63:1","text":"God, you are my God. I will earnestly seek you. My soul thirsts for you. My flesh longs for you, in a dry and weary land, where there is no water."},{"ref":"Psalm 103:1-2","text":"Praise the LORD, my soul! All that is within me, praise his holy name! Praise the LORD, my soul, and don't forget all his benefits."},{"ref":"Psalm 119:105","text":"Your word is a lamp to my feet, and a light for my path."},{"ref":"Psalm 131:1-2","text":"LORD, my heart isn't arrogant, nor my eyes lofty; nor do I concern myself with great matters, or things too wonderful for me. Surely I have stilled and quieted my soul, like a weaned child with his mother, like a weaned child is my soul within me."},{"ref":"Psalm 139:1-3","text":"LORD, you have searched me, and you know me. You know my sitting down and my rising up. You perceive my thoughts from afar. You search out my path and my lying down, and are acquainted with all my ways."},{"ref":"Psalm 16:11","text":"You will show me the path of life. In your presence is fullness of joy. In your right hand there are pleasures forever more."},{"ref":"Psalm 121:1-2","text":"I will lift up my eyes to the hills. Where does my help come from? My help comes from the LORD, who made heaven and earth."},{"ref":"Isaiah 43:1","text":"But now the LORD who created you, Jacob, and he who formed you, Israel, says: \"Don't be afraid, for I have redeemed you. I have called you by your name. You are mine.\""},{"ref":"Isaiah 40:31","text":"But those who wait for the LORD will renew their strength. They will mount up with wings like eagles. They will run, and not be weary. They will walk, and not faint."},{"ref":"Isaiah 30:15","text":"For thus said the Lord GOD, the Holy One of Israel, \"You will be saved in returning and rest. Your strength will be in quietness and in confidence.\""},{"ref":"Isaiah 55:10-11","text":"For as the rain comes down and the snow from the sky, and doesn't return there, but waters the earth, and makes it grow and bud, and gives seed to the sower and bread to the eater; so is my word that goes out of my mouth: it will not return to me void, but it will accomplish that which I please, and it will prosper in the thing I sent it to do."},{"ref":"Jeremiah 29:11","text":"\"For I know the thoughts that I think toward you,\" says the LORD, \"thoughts of peace, and not of evil, to give you hope and a future.\""},{"ref":"Lamentations 3:22-23","text":"It is because of the LORD's loving kindnesses that we are not consumed, because his compassion doesn't fail. They are new every morning. Great is your faithfulness."},{"ref":"Hosea 2:14","text":"Behold, I will allure her, and bring her into the wilderness, and speak tenderly to her."},{"ref":"1 Kings 19:11-12","text":"He said, \"Go out, and stand on the mountain before the LORD.\" Behold, the LORD passed by, and a great and strong wind tore the mountains, and broke in pieces the rocks before the LORD; but the LORD was not in the wind. After the wind there was an earthquake; but the LORD was not in the earthquake. After the earthquake a fire passed; but the LORD was not in the fire. After the fire, there was a still small voice."},{"ref":"Zephaniah 3:17","text":"The LORD, your God, is among you, a mighty one who will save. He will rejoice over you with joy. He will calm you in his love. He will rejoice over you with singing."},{"ref":"Micah 6:8","text":"He has shown you, O man, what is good. What does the LORD require of you, but to act justly, to love mercy, and to walk humbly with your God?"},{"ref":"Matthew 11:28-30","text":"\"Come to me, all you who labor and are heavily burdened, and I will give you rest. Take my yoke upon you, and learn from me, for I am gentle and humble in heart; and you will find rest for your souls. For my yoke is easy, and my burden is light.\""},{"ref":"Matthew 6:6","text":"But you, when you pray, enter into your inner room, and having shut your door, pray to your Father who is in secret, and your Father who sees in secret will reward you openly."},{"ref":"Matthew 5:3-8","text":"\"Blessed are the poor in spirit, for theirs is the Kingdom of Heaven. Blessed are those who mourn, for they shall be comforted. Blessed are the gentle, for they shall inherit the earth. Blessed are those who hunger and thirst after righteousness, for they shall be filled. Blessed are the merciful, for they shall obtain mercy. Blessed are the pure in heart, for they shall see God.\""},{"ref":"Matthew 14:27","text":"But immediately Jesus spoke to them, saying, \"Cheer up! It is I! Don't be afraid.\""},{"ref":"Mark 6:31","text":"He said to them, \"You come apart into a deserted place, and rest awhile.\" For there were many coming and going, and they had no leisure so much as to eat."},{"ref":"Mark 4:39","text":"He awoke, and rebuked the wind, and said to the sea, \"Peace! Be still!\" The wind ceased, and there was a great calm."},{"ref":"Mark 10:51","text":"Jesus asked him, \"What do you want me to do for you?\" The blind man said to him, \"Rabboni, that I may see again.\""},{"ref":"Luke 1:38","text":"Mary said, \"Behold, the servant of the Lord; let it be done to me according to your word.\" The angel departed from her."},{"ref":"Luke 2:19","text":"But Mary kept all these sayings, pondering them in her heart."},{"ref":"Luke 10:41-42","text":"Jesus answered her, \"Martha, Martha, you are anxious and troubled about many things, but one thing is needed. Mary has chosen the good part, which will not be taken away from her.\""},{"ref":"Luke 15:20","text":"He arose, and came to his father. But while he was still far off, his father saw him, and was moved with compassion, and ran, and fell on his neck, and kissed him."},{"ref":"John 1:1-5","text":"In the beginning was the Word, and the Word was with God, and the Word was God. The same was in the beginning with God. All things were made through him. Without him, nothing was made that has been made. In him was life, and the life was the light of men. The light shines in the darkness, and the darkness hasn't overcome it."},{"ref":"John 15:4-5","text":"Remain in me, and I in you. As the branch can't bear fruit by itself unless it remains in the vine, so neither can you, unless you remain in me. I am the vine. You are the branches. He who remains in me and I in him bears much fruit, for apart from me you can do nothing."},{"ref":"John 14:27","text":"Peace I leave with you. My peace I give to you; not as the world gives, I give to you. Don't let your heart be troubled, neither let it be fearful."},{"ref":"John 6:68","text":"Simon Peter answered him, \"Lord, to whom would we go? You have the words of eternal life.\""},{"ref":"John 20:15-16","text":"Jesus said to her, \"Woman, why are you weeping? Who are you looking for?\" She, supposing him to be the gardener, said to him, \"Sir, if you have carried him away, tell me where you have laid him, and I will take him away.\" Jesus said to her, \"Mary.\" She turned and said to him, \"Rabboni!\" which is to say, \"Teacher!\""},{"ref":"John 21:15","text":"So when they had eaten their breakfast, Jesus said to Simon Peter, \"Simon, son of Jonah, do you love me more than these?\" He said to him, \"Yes, Lord; you know that I have affection for you.\" He said to him, \"Feed my lambs.\""},{"ref":"Romans 8:38-39","text":"For I am persuaded that neither death, nor life, nor angels, nor principalities, nor things present, nor things to come, nor powers, nor height, nor depth, nor any other created thing will be able to separate us from God's love which is in Christ Jesus our Lord."},{"ref":"1 Corinthians 13:4-7","text":"Love is patient and is kind. Love doesn't envy. Love doesn't brag, is not proud, doesn't behave itself inappropriately, doesn't seek its own way, is not provoked, takes no account of evil; doesn't rejoice in unrighteousness, but rejoices with the truth; bears all things, believes all things, hopes all things, and endures all things."},{"ref":"2 Corinthians 12:9","text":"He has said to me, \"My grace is sufficient for you, for my power is made perfect in weakness.\" Most gladly therefore I will rather glory in my weaknesses, that the power of Christ may rest on me."},{"ref":"Philippians 4:6-7","text":"In nothing be anxious, but in everything, by prayer and petition with thanksgiving, let your requests be made known to God. And the peace of God, which surpasses all understanding, will guard your hearts and your thoughts in Christ Jesus."},{"ref":"Galatians 2:20","text":"I have been crucified with Christ, and it is no longer I who live, but Christ lives in me. That life which I now live in the flesh, I live by faith in the Son of God, who loved me, and gave himself up for me."},{"ref":"Ephesians 3:17-19","text":"May Christ dwell in your hearts through faith, to the end that you, being rooted and grounded in love, may be strengthened to comprehend with all the saints what is the width and length and height and depth, and to know Christ's love which surpasses knowledge, that you may be filled with all the fullness of God."},{"ref":"1 John 4:16","text":"We know and have believed the love which God has for us. God is love, and he who remains in love remains in God, and God remains in him."},{"ref":"Hebrews 4:12","text":"For the word of God is living and active, and sharper than any two-edged sword, piercing even to the dividing of soul and spirit, of both joints and marrow, and is able to discern the thoughts and intentions of the heart."},{"ref":"1 Peter 5:7","text":"Cast all your worries on him, because he cares for you."}];
+
+/* ============ storage ============ */
+function readJSON(key, fallback) {
+  try { var raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; } catch (e) { return fallback; }
+}
+function writeJSON(key, val) {
+  try { localStorage.setItem(key, JSON.stringify(val)); return true; } catch (e) { return false; }
+}
+function removeKey(key) { try { localStorage.removeItem(key); } catch (e) {} }
+
+var store = readJSON(STORE_KEY, null) || {};
+if (!store.settings) store.settings = {};
+if (!Array.isArray(store.entries)) store.entries = [];
+var S = store.settings;
+for (var k in DEFAULTS) { if (!(k in S)) S[k] = Array.isArray(DEFAULTS[k]) ? DEFAULTS[k].slice() : DEFAULTS[k]; }
+if (!Array.isArray(S.durs) || S.durs.length !== 4) S.durs = DEFAULTS.durs.slice();
+function persist() {
+  if (!writeJSON(STORE_KEY, store)) toast('Could not save. Storage may be full or blocked.');
+}
+
+/* ============ helpers ============ */
+function $(id) { return document.getElementById(id); }
+function pad(n) { return (n < 10 ? '0' : '') + n; }
+function dayKey(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+function fromKey(k) { var p = k.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+function addDays(k, n) { var d = fromKey(k); d.setDate(d.getDate() + n); return dayKey(d); }
+function todayKey() { return dayKey(new Date()); }
+function dayDiff(a, b) { return Math.round((fromKey(b) - fromKey(a)) / 86400000); }
+function longDate(k) {
+  try { return fromKey(k).toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' }); } catch (e) { return k; }
+}
+function shortDate(k) {
+  try { return fromKey(k).toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' }); } catch (e) { return k; }
+}
+function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]; }); }
+function clearEl(el) { while (el.firstChild) el.removeChild(el.firstChild); }
+function usccbLink(k) { var p = k.split('-'); return 'https://bible.usccb.org/bible/readings/' + p[1] + p[2] + p[0].slice(2) + '.cfm'; }
+var toastTimer = null;
+function toast(msg) {
+  var t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.classList.remove('show'); }, 2600);
+}
+function fmtClock(ms) {
+  var s = Math.max(0, Math.ceil(ms / 1000)); return Math.floor(s / 60) + ':' + pad(s % 60);
+}
+
+/* ============ confirm dialog ============ */
+var confirmCb = null;
+function askConfirm(msg, okLabel, cb) {
+  $('confirm-msg').textContent = msg; $('confirm-ok').textContent = okLabel || 'Confirm';
+  confirmCb = cb; $('confirm').hidden = false; $('confirm-ok').focus();
+}
+$('confirm-cancel').addEventListener('click', function () { $('confirm').hidden = true; confirmCb = null; });
+$('confirm-ok').addEventListener('click', function () { $('confirm').hidden = true; var cb = confirmCb; confirmCb = null; if (cb) cb(); });
+
+/* ============ liturgical color (from Day 128) ============ */
+function liturgicalKey(season, name) {
+  season = (season || '').toLowerCase(); name = (name || '').toLowerCase();
+  var reds = [/martyr/, /pentecost/, /palm sunday/, /passion sunday/, /good friday/, /triumph of the (holy )?cross/, /exaltation of the (holy )?cross/, /precious blood/, /apostle/, /evangelist/];
+  for (var i = 0; i < reds.length; i++) { if (reds[i].test(name)) return 'red'; }
+  if (/gaudete|laetare|third sunday of advent|fourth sunday of lent/.test(name)) return 'rose';
+  if (season.indexOf('advent') !== -1 || season.indexOf('lent') !== -1) return 'violet';
+  if (season.indexOf('christmas') !== -1 || season.indexOf('easter') !== -1) return 'white';
+  if (/solemnity|all saints|immaculate|assumption|nativity|christ the king|trinity|corpus christi/.test(name)) return 'white';
+  return 'green';
+}
+
+/* ============ readings: citation fetch with date cache ============ */
+var cache = readJSON(CACHE_KEY, {}) || {};
+function cacheGet(k) { return cache[k] || null; }
+function cachePut(k, v) {
+  cache[k] = v; cache[k]._t = Date.now();
+  var keys = Object.keys(cache);
+  if (keys.length > 40) {
+    keys.sort(function (a, b) { return (cache[a]._t || 0) - (cache[b]._t || 0); });
+    for (var i = 0; i < keys.length - 40; i++) delete cache[keys[i]];
+  }
+  writeJSON(CACHE_KEY, cache);
+}
+function fetchJSON(url, ms) {
+  var ctl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  var timer = setTimeout(function () { if (ctl) ctl.abort(); }, ms || 9000);
+  return fetch(url, ctl ? { signal: ctl.signal } : {}).then(function (r) {
+    clearTimeout(timer); if (!r.ok) throw new Error('HTTP ' + r.status); return r.json();
+  }, function (e) { clearTimeout(timer); throw e; });
+}
+function fetchDay(k) {
+  var ck = 'day:' + k, hit = cacheGet(ck);
+  if (hit && hit.readings && Object.keys(hit.readings).length) return Promise.resolve(hit);
+  var y = k.slice(0, 4), md = k.slice(5);
+  return Promise.allSettled([
+    fetchJSON(READINGS_API + 'readings/' + y + '/' + md + '.json'),
+    fetchJSON(READINGS_API + 'liturgical-calendar/' + y + '/' + md + '.json')
+  ]).then(function (res) {
+    var rd = res[0].status === 'fulfilled' ? res[0].value : null;
+    var cal = res[1].status === 'fulfilled' ? res[1].value : null;
+    var out = { date:k, season:'', name:'', readings:{}, usccb: usccbLink(k) };
+    if (rd) {
+      out.season = rd.season || '';
+      if (rd.usccbLink) out.usccb = rd.usccbLink;
+      var r = rd.readings || {};
+      READING_ORDER.forEach(function (key) { if (r[key] && typeof r[key] === 'string') out.readings[key] = r[key]; });
+    }
+    if (cal) {
+      if (!out.season && cal.season) out.season = cal.season;
+      if (cal.celebration && cal.celebration.name) out.name = cal.celebration.name;
+    }
+    if (!rd && !cal) throw new Error('offline');
+    if (Object.keys(out.readings).length) cachePut(ck, out);
+    return out;
+  });
+}
+
+/* Turn a lectionary citation into a bible-api query. Long or short forms use the short form. */
+function normalizeCitation(c) {
+  c = String(c || '').replace(/[\u2010-\u2015]/g, '-').replace(/\s+/g, ' ').trim();
+  var m = c.split(/\s+or\s+/i);
+  if (m.length > 1) {
+    var first = m[0].trim(), alt = m[m.length - 1].trim();
+    var bookMatch = first.match(/^((?:[1-3]\s)?[A-Za-z][A-Za-z .]*?)\s+\d/);
+    if (/^\d+:/.test(alt) && bookMatch) alt = bookMatch[1] + ' ' + alt;
+    c = /^[1-3]?\s?[A-Za-z]/.test(alt) ? alt : first;
+  }
+  c = c.replace(/(\d)[a-e]\b/g, '$1').replace(/\s*,\s*/g, ',').replace(/\s*-\s*/g, '-').replace(/\s*;\s*/g, ',');
+  c = c.replace(/^Psalm\b/i, 'Psalms').replace(/^Ps\b\.?/i, 'Psalms');
+  return c;
+}
+function cleanText(t) {
+  return String(t || '').replace(/Yahweh/g, 'the LORD').replace(/\bthe the LORD/g, 'the LORD')
+    .replace(/(^|[.!?]\s+)the LORD/g, function (all, p) { return p + 'The LORD'; })
+    .replace(/\s+/g, ' ').trim();
+}
+function fetchPassage(citation, kind) {
+  var q = normalizeCitation(citation);
+  var prefer = kind === 'psalm' ? 'web' : S.trans;
+  var order = prefer === 'web' ? ['web', 'dra'] : ['dra', 'web'];
+  var ck = 'p:' + order[0] + ':' + q, hit = cacheGet(ck);
+  if (hit && hit.verses && hit.verses.length) return Promise.resolve(hit);
+  function attempt(i) {
+    if (i >= order.length) return Promise.reject(new Error('passage'));
+    return fetchJSON(BIBLE_API + encodeURIComponent(q) + '?translation=' + order[i], 10000).then(function (d) {
+      if (!d || !Array.isArray(d.verses) || !d.verses.length) throw new Error('empty');
+      var out = { ref: citation, query: q, trans: (d.translation_name || order[i]).replace(/\s+/g, ' '), verses: d.verses.map(function (v) {
+        return { n: v.verse, c: v.chapter, t: cleanText(v.text) };
+      }).filter(function (v) { return v.t; }) };
+      cachePut(ck, out); return out;
+    }).catch(function () { return attempt(i + 1); });
+  }
+  return attempt(0);
+}
+
+/* ============ Today screen ============ */
+var viewKey = todayKey();
+var dayData = null;
+var current = null; /* { source, ref, label, verses:[{n,c,t}], trans } */
+var chosenKind = S.reading;
+var loadToken = 0;
+
+function verseOfDay(k) {
+  var idx = ((Math.floor(fromKey(k).getTime() / 86400000) % VERSES.length) + VERSES.length) % VERSES.length;
+  return VERSES[idx];
+}
+function verseToCurrent(v, label) {
+  return { source:'verse', ref:v.ref, label: label || 'Verse for the day', verses:[{ n:0, c:0, t:v.text }], trans:'World English Bible' };
+}
+
+function renderDateBar() {
+  var t = todayKey(), d = dayDiff(t, viewKey);
+  var rel = d === 0 ? 'Today' : d === 1 ? 'Tomorrow' : d === -1 ? 'Yesterday' : (d > 0 ? 'In ' + d + ' days' : Math.abs(d) + ' days ago');
+  $('date-label').innerHTML = esc(rel) + '<small>' + esc(longDate(viewKey)) + '</small>';
+  $('day-prev').disabled = d <= -7; $('day-next').disabled = d >= 7;
+}
+function renderPlan() {
+  var el = $('plan-strip'); clearEl(el);
+  var total = 0;
+  MOVES.forEach(function (m, i) {
+    total += S.durs[i];
+    var d = document.createElement('div');
+    d.innerHTML = '<b>' + S.durs[i] + ' min</b><span>' + esc(m.en) + '</span>';
+    el.appendChild(d);
+  });
+  $('begin-btn').textContent = 'Begin lectio divina, ' + total + ' minutes';
+}
+function renderStreakNote() {
+  var st = streakStats();
+  var prayedToday = st.days.has(todayKey());
+  var msg;
+  if (st.current > 0) msg = (prayedToday ? 'Prayed today. ' : 'Pray today to keep it going. ') + 'Current streak: ' + st.current + (st.current === 1 ? ' day.' : ' days.');
+  else msg = 'Your journal keeps each word you save and counts your days of prayer.';
+  $('streak-note').textContent = msg;
+}
+
+function renderChips() {
+  var el = $('reading-chips'); clearEl(el);
+  var r = (dayData && dayData.readings) || {};
+  READING_ORDER.forEach(function (key) {
+    if (!r[key]) return;
+    el.appendChild(chip(key, READING_LABELS[key]));
+  });
+  el.appendChild(chip('verse', 'Short verse'));
+  function chip(kind, label) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'chip'; b.textContent = label; b.dataset.kind = kind;
+    b.setAttribute('aria-pressed', String(kind === chosenKind));
+    b.addEventListener('click', function () { chosenKind = kind; renderChips(); loadPassage(); });
+    return b;
+  }
+}
+
+function setHeaderInfo() {
+  var name = (dayData && dayData.name) || longDate(viewKey);
+  var season = (dayData && dayData.season) || '';
+  var lk = liturgicalKey(season, name);
+  $('lit-dot').style.background = LIT_COLORS[lk][0];
+  $('season-text').textContent = season ? season + ' \u00b7 ' + LIT_COLORS[lk][1] : 'Daily Mass readings';
+  $('day-name').textContent = name;
+}
+
+function showSkeleton() {
+  $('passage-area').innerHTML = '<div class="skeleton" style="width:40%"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton" style="width:80%"></div>';
+  $('begin-btn').disabled = true;
+}
+
+function loadDay() {
+  var token = ++loadToken;
+  dayData = null; current = null;
+  renderDateBar(); showSkeleton();
+  $('season-text').textContent = 'Loading the day'; $('day-name').innerHTML = '&nbsp;';
+  fetchDay(viewKey).then(function (d) {
+    if (token !== loadToken) return;
+    dayData = d;
+    if (!d.readings[chosenKind] && chosenKind !== 'verse') chosenKind = d.readings[S.reading] ? S.reading : (d.readings.gospel ? 'gospel' : 'verse');
+    setHeaderInfo(); renderChips(); loadPassage();
+  }).catch(function () {
+    if (token !== loadToken) return;
+    dayData = { date:viewKey, season:'', name:'', readings:{}, usccb: usccbLink(viewKey), offline:true };
+    chosenKind = 'verse';
+    setHeaderInfo(); renderChips(); loadPassage();
+  });
+}
+
+function loadPassage() {
+  var token = loadToken;
+  showSkeleton();
+  if (chosenKind === 'verse' || !dayData || !dayData.readings[chosenKind]) {
+    current = verseToCurrent(verseOfDay(viewKey));
+    renderPassagePreview(dayData && dayData.offline ? 'offline' : null);
+    return;
+  }
+  var cite = dayData.readings[chosenKind];
+  fetchPassage(cite, chosenKind).then(function (p) {
+    if (token !== loadToken) return;
+    current = { source:'mass', kind:chosenKind, ref:cite, label: READING_LABELS[chosenKind], verses:p.verses, trans:p.trans };
+    renderPassagePreview(null);
+  }).catch(function () {
+    if (token !== loadToken) return;
+    current = null;
+    renderMissingText(cite);
+  });
+}
+
+function versesHTML(verses, tappable) {
+  var html = '', wi = 0;
+  verses.forEach(function (v) {
+    if (v.n) html += '<sup>' + v.n + '</sup>';
+    var words = v.t.split(/\s+/);
+    words.forEach(function (w) {
+      if (tappable) html += '<span class="w" data-i="' + (wi++) + '">' + esc(w) + '</span> ';
+      else html += esc(w) + ' ';
+    });
+  });
+  return html;
+}
+
+function renderPassagePreview(flag) {
+  var a = $('passage-area');
+  var html = '<p class="cite">' + esc(current.label) + ' \u00b7 ' + esc(current.ref) + '</p>';
+  html += '<div class="passage preview" id="preview-text">' + versesHTML(current.verses, false) + '</div>';
+  html += '<div class="row" style="margin-top:.5rem"><button type="button" class="linkish" id="expand-btn">Show the whole passage</button>';
+  if (current.source === 'mass') html += '<a class="linkish" style="display:inline-flex;align-items:center" href="' + esc(dayData.usccb) + '" target="_blank" rel="noopener">USCCB text</a>';
+  if (current.source === 'verse') html += '<button type="button" class="linkish" id="another-verse">Another verse</button>';
+  html += '</div>';
+  html += '<p class="note">' + esc(current.trans) + (current.source === 'mass' && current.kind === 'psalm' ? '. Psalms use the modern translation so the numbering matches the lectionary.' : '.') +
+    (current.source === 'mass' ? ' The Mass in the United States proclaims the NABRE; tap USCCB text to pray with it instead.' : '') + '</p>';
+  if (flag === 'offline') html += '<p class="status">The readings could not be reached, so here is a verse from the offline set. Try again later, or use the official USCCB readings: <a href="' + esc(usccbLink(viewKey)) + '" target="_blank" rel="noopener">open USCCB</a>.</p>';
+  a.innerHTML = html;
+  var pt = $('preview-text');
+  if (pt.scrollHeight <= pt.clientHeight + 4) { pt.classList.remove('preview'); $('expand-btn').hidden = true; }
+  $('expand-btn').addEventListener('click', function () { pt.classList.remove('preview'); this.hidden = true; });
+  var av = $('another-verse');
+  if (av) av.addEventListener('click', function () {
+    var v = VERSES[Math.floor(Math.random() * VERSES.length)];
+    if (current && v.ref === current.ref) v = VERSES[(VERSES.indexOf(v) + 1) % VERSES.length];
+    current = verseToCurrent(v, 'Short verse'); renderPassagePreview(null);
+  });
+  $('begin-btn').disabled = false;
+}
+
+function renderMissingText(cite) {
+  var a = $('passage-area');
+  a.innerHTML = '<p class="cite">' + esc(READING_LABELS[chosenKind]) + ' \u00b7 ' + esc(cite) + '</p>' +
+    '<p class="status err">The text of this reading could not be loaded. Open the official readings, then paste the passage below, or pray with a short verse.</p>' +
+    '<div class="row" style="margin:.7rem 0"><a class="btn ghost" href="' + esc(dayData.usccb) + '" target="_blank" rel="noopener">Open USCCB readings</a>' +
+    '<button type="button" class="btn ghost" id="retry-btn">Try again</button></div>' +
+    '<label class="f" for="paste-box">Paste the passage</label><textarea id="paste-box" maxlength="6000" placeholder="Paste the reading here"></textarea>' +
+    '<button type="button" class="btn block" id="use-paste" style="margin-top:.6rem">Pray with this text</button>';
+  $('retry-btn').addEventListener('click', loadPassage);
+  $('use-paste').addEventListener('click', function () {
+    var t = $('paste-box').value.replace(/\s+/g, ' ').trim();
+    if (t.length < 10) { toast('Paste a little more of the passage first.'); return; }
+    current = { source:'paste', kind:chosenKind, ref:cite, label:READING_LABELS[chosenKind], verses:[{ n:0, c:0, t:t }], trans:'Your pasted text' };
+    renderPassagePreview(null);
+  });
+  $('begin-btn').disabled = true;
+}
+
+$('day-prev').addEventListener('click', function () { viewKey = addDays(viewKey, -1); loadDay(); });
+$('day-next').addEventListener('click', function () { viewKey = addDays(viewKey, 1); loadDay(); });
+
+/* ============ chimes (generated, no audio files) ============ */
+var actx = null;
+function audioUnlock() {
+  try {
+    if (!actx) { var AC = window.AudioContext || window.webkitAudioContext; if (AC) actx = new AC(); }
+    if (actx && actx.state === 'suspended') actx.resume();
+    if (actx) { var b = actx.createBuffer(1, 1, 22050), s = actx.createBufferSource(); s.buffer = b; s.connect(actx.destination); s.start(0); }
+  } catch (e) {}
+}
+function bell(delay, base, gainScale) {
+  if (!actx) return;
+  var t0 = actx.currentTime + (delay || 0), vol = S.vol * (gainScale || 1);
+  var partials = [[1, 1, 6.5], [2.0, 0.38, 4.0], [2.76, 0.32, 3.2], [5.4, 0.12, 1.8], [8.93, 0.05, 1.1]];
+  var master = actx.createGain(); master.gain.value = 0.32 * vol; master.connect(actx.destination);
+  partials.forEach(function (p) {
+    var o = actx.createOscillator(), g = actx.createGain();
+    o.type = 'sine'; o.frequency.value = base * p[0];
+    o.detune.value = (Math.random() - 0.5) * 6;
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(p[1], t0 + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + p[2]);
+    o.connect(g); g.connect(master); o.start(t0); o.stop(t0 + p[2] + 0.05);
+  });
+}
+function chime(kind) {
+  if (S.vibrate && navigator.vibrate) { try { navigator.vibrate(kind === 'end' ? [120, 120, 120, 120, 220] : [140]); } catch (e) {} }
+  if (!S.chime || !actx) return;
+  try {
+    if (actx.state === 'suspended') actx.resume();
+    if (kind === 'end') { bell(0, 392, 1); bell(2.2, 392, 0.9); bell(4.4, 293.66, 1); }
+    else if (kind === 'start') bell(0, 392, 0.9);
+    else bell(0, 523.25, 0.8);
+  } catch (e) {}
+}
+
+/* ============ keep the screen awake ============ */
+/* Screen Wake Lock where it works, plus a silent looping video on iPhone and iPad,
+   where the Wake Lock API is missing or unreliable in home screen apps before iOS 18.4. */
+var wakeLock = null, wakeVideo = null, videoOn = false;
+var IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+var KEEP_AWAKE_MP4 = 'data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAMpbW9vdgAAAGxtdmhkAAAAAAAAAAAAAAAAAAAD6AAAB9AAAQAAAQAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAlN0cmFrAAAAXHRraGQAAAADAAAAAAAAAAAAAAABAAAAAAAAB9AAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAABAAAAAQAAAAAAAkZWR0cwAAABxlbHN0AAAAAAAAAAEAAAfQAAAAAAABAAAAAAHLbWRpYQAAACBtZGhkAAAAAAAAAAAAAAAAAABAAAAAgABVxAAAAAAALWhkbHIAAAAAAAAAAHZpZGUAAAAAAAAAAAAAAABWaWRlb0hhbmRsZXIAAAABdm1pbmYAAAAUdm1oZAAAAAEAAAAAAAAAAAAAACRkaW5mAAAAHGRyZWYAAAAAAAAAAQAAAAx1cmwgAAAAAQAAATZzdGJsAAAAtnN0c2QAAAAAAAAAAQAAAKZhdmMxAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAABAAEABIAAAASAAAAAAAAAABFUxhdmM2MC4zMS4xMDIgbGlieDI2NAAAAAAAAAAAAAAAGP//AAAALGF2Y0MBQsAK/+EAFWdCwAraewEQAAADABAAAAMAIPEiagEABGjOD8gAAAAQcGFzcAAAAAEAAAABAAAAFGJ0cnQAAAAAAAAKOAAACjgAAAAYc3R0cwAAAAAAAAABAAAAAgAAQAAAAAAUc3RzcwAAAAAAAAABAAAAAQAAABxzdHNjAAAAAAAAAAEAAAABAAAAAgAAAAEAAAAcc3RzegAAAAAAAAAAAAAAAgAAAoUAAAAJAAAAFHN0Y28AAAAAAAAAAQAAA1kAAABidWR0YQAAAFptZXRhAAAAAAAAACFoZGxyAAAAAAAAAABtZGlyYXBwbAAAAAAAAAAAAAAAAC1pbHN0AAAAJal0b28AAAAdZGF0YQAAAAEAAAAATGF2ZjYwLjE2LjEwMAAAAAhmcmVlAAAClm1kYXQAAAJvBgX//2vcRem95tlIt5Ys2CDZI+7veDI2NCAtIGNvcmUgMTY0IHIzMTA4IDMxZTE5ZjkgLSBILjI2NC9NUEVHLTQgQVZDIGNvZGVjIC0gQ29weWxlZnQgMjAwMy0yMDIzIC0gaHR0cDovL3d3dy52aWRlb2xhbi5vcmcveDI2NC5odG1sIC0gb3B0aW9uczogY2FiYWM9MCByZWY9MSBkZWJsb2NrPTE6MDowIGFuYWx5c2U9MHgxOjB4MTExIG1lPWhleCBzdWJtZT0yIHBzeT0xIHBzeV9yZD0xLjAwOjAuMDAgbWl4ZWRfcmVmPTAgbWVfcmFuZ2U9MTYgY2hyb21hX21lPTEgdHJlbGxpcz0wIDh4OGRjdD0wIGNxbT0wIGRlYWR6b25lPTIxLDExIGZhc3RfcHNraXA9MSBjaHJvbWFfcXBfb2Zmc2V0PTAgdGhyZWFkcz0xIGxvb2thaGVhZF90aHJlYWRzPTEgc2xpY2VkX3RocmVhZHM9MCBucj0wIGRlY2ltYXRlPTEgaW50ZXJsYWNlZD0wIGJsdXJheV9jb21wYXQ9MCBjb25zdHJhaW5lZF9pbnRyYT0wIGJmcmFtZXM9MCB3ZWlnaHRwPTAga2V5aW50PTI1MCBrZXlpbnRfbWluPTEgc2NlbmVjdXQ9NDAgaW50cmFfcmVmcmVzaD0wIHJjX2xvb2thaGVhZD0xMCByYz1jcmYgbWJ0cmVlPTEgY3JmPTIzLjAgcWNvbXA9MC42MCBxcG1pbj0wIHFwbWF4PTY5IHFwc3RlcD00IGlwX3JhdGlvPTEuNDAgYXE9MToxLjAwAIAAAAAOZYiEBb///w9FAAFPf4AAAAAFQZogFfU=';
+function startVideoWake() {
+  try {
+    if (!wakeVideo) {
+      wakeVideo = document.createElement('video');
+      wakeVideo.setAttribute('playsinline', ''); wakeVideo.setAttribute('muted', ''); wakeVideo.setAttribute('aria-hidden', 'true');
+      wakeVideo.muted = true; wakeVideo.loop = true; wakeVideo.src = KEEP_AWAKE_MP4;
+      wakeVideo.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0.01;pointer-events:none;left:0;top:0';
+      document.body.appendChild(wakeVideo);
+    }
+    var p = wakeVideo.play();
+    if (p && p.then) p.then(function () { videoOn = true; updateWakeNote(); }, function () { videoOn = false; updateWakeNote(); });
+    else { videoOn = true; updateWakeNote(); }
+  } catch (e) { videoOn = false; updateWakeNote(); }
+}
+function stopVideoWake() { if (wakeVideo) { try { wakeVideo.pause(); } catch (e) {} } videoOn = false; }
+function requestWake() {
+  if (!S.wake || !session) { updateWakeNote(); return; }
+  if (IS_IOS || !('wakeLock' in navigator)) startVideoWake();
+  if ('wakeLock' in navigator) {
+    navigator.wakeLock.request('screen').then(function (l) {
+      wakeLock = l; updateWakeNote();
+      l.addEventListener('release', function () { wakeLock = null; updateWakeNote(); });
+    }).catch(function () { wakeLock = null; if (!videoOn) startVideoWake(); updateWakeNote(); });
+  }
+  updateWakeNote();
+}
+function releaseWake() { if (wakeLock) { try { wakeLock.release(); } catch (e) {} wakeLock = null; } stopVideoWake(); }
+function updateWakeNote() {
+  var n = $('wl-note');
+  if (!S.wake) n.textContent = 'Screen may dim. Keep awake is off in Settings.';
+  else if (wakeLock || videoOn) n.textContent = 'Screen will stay awake while you pray.';
+  else n.textContent = 'Tap the screen once if it starts to dim; the timer keeps time either way.';
+}
+
+/* ============ session (four movements, timestamp countdown) ============ */
+var session = null; /* {passage, idx, endAt, left, paused, started, active, sel:[]} */
+var tickTimer = null;
+var RING = 339.292;
+
+function saveSession() { if (session) writeJSON(SESSION_KEY, session); else removeKey(SESSION_KEY); }
+function moveMs(i) { return Math.max(1, S.durs[i]) * 60000; }
+function remaining() { return session.paused ? session.left : session.endAt - Date.now(); }
+
+function startSession() {
+  if (!current) return;
+  audioUnlock();
+  session = { passage: current, viewKey: viewKey, idx: 0, endAt: Date.now() + moveMs(0), left: moveMs(0), paused: false, started: Date.now(), active: 0, lastTick: Date.now(), sel: [] };
+  enterPray(); chime('start');
+}
+function enterPray() {
+  document.body.classList.add('in-session');
+  showScreen('pray');
+  $('sess-passage').innerHTML = '<p class="cite">' + esc(session.passage.label) + ' \u00b7 ' + esc(session.passage.ref) + '</p><div class="passage" id="sess-text">' + versesHTML(session.passage.verses, true) + '</div><p class="tap-hint">Tap words to hold them. Tap again to let go.</p>';
+  wireWordTaps($('sess-text'), function (i) { toggleSel(i); });
+  paintSel(); renderMove(); saveSession();
+  clearInterval(tickTimer); tickTimer = setInterval(tick, 250); tick();
+  requestWake();
+}
+function renderMove() {
+  var m = MOVES[session.idx];
+  $('mv-name').textContent = m.name; $('mv-latin').textContent = m.en;
+  $('mv-prompt').textContent = m.prompt;
+  var steps = $('steps').children;
+  for (var i = 0; i < steps.length; i++) {
+    steps[i].className = 'step' + (i < session.idx ? ' done' : i === session.idx ? ' now' : '');
+  }
+  document.body.classList.toggle('rest', m.key === 'contemplatio');
+  $('sess-passage').style.display = m.key === 'oratio' || m.key === 'contemplatio' ? 'none' : '';
+  $('next-btn').textContent = session.idx === MOVES.length - 1 ? 'Finish' : 'Next';
+  paintSel();
+  $('pause-btn').textContent = session.paused ? 'Resume' : 'Pause';
+  var card = $('mv-name'); card.classList.remove('fade-in'); void card.offsetWidth; card.classList.add('fade-in');
+  $('sr-time').textContent = m.name + ', ' + S.durs[session.idx] + ' minutes';
+}
+function tick() {
+  if (!session) return;
+  var now = Date.now();
+  if (!session.paused) { session.active += Math.max(0, now - session.lastTick); }
+  session.lastTick = now;
+  var left = remaining(), total = moveMs(session.idx);
+  $('clock').textContent = fmtClock(left);
+  $('clock-sub').textContent = session.paused ? 'paused' : left <= 0 ? 'time' : 'remaining';
+  $('ring').style.strokeDashoffset = String(RING * (1 - Math.max(0, Math.min(1, left / total))));
+  if (left <= 0 && !session.paused) {
+    if (S.auto || session.idx === MOVES.length - 1) advance(true);
+    else if (!session.overtimeChimed) { session.overtimeChimed = true; chime('next'); saveSession(); }
+  }
+}
+function advance(timed) {
+  if (!session) return;
+  if (session.idx >= MOVES.length - 1) { finishSession(timed); return; }
+  session.idx += 1; session.overtimeChimed = false;
+  session.left = moveMs(session.idx);
+  session.endAt = Date.now() + session.left;
+  chime('next');
+  renderMove(); saveSession(); tick();
+}
+function togglePause() {
+  if (!session) return;
+  if (session.paused) { session.paused = false; session.endAt = Date.now() + session.left; }
+  else { session.left = Math.max(0, session.endAt - Date.now()); session.paused = true; }
+  session.lastTick = Date.now();
+  renderMove(); saveSession(); tick();
+}
+function finishSession(timed) {
+  clearInterval(tickTimer); tickTimer = null;
+  if (timed) chime('end');
+  releaseWake();
+  document.body.classList.remove('in-session', 'rest');
+  session.done = true; saveSession();
+  openSave();
+}
+
+/* word holding during the session and on the save screen */
+function wireWordTaps(container, fn) {
+  container.addEventListener('click', function (e) {
+    var t = e.target.closest ? e.target.closest('.w') : null;
+    if (!t) return;
+    fn(+t.dataset.i);
+  });
+}
+function wordList() {
+  var out = [];
+  session.passage.verses.forEach(function (v) { v.t.split(/\s+/).forEach(function (w) { out.push(w); }); });
+  return out;
+}
+function toggleSel(i) {
+  var at = session.sel.indexOf(i);
+  if (at === -1) session.sel.push(i); else session.sel.splice(at, 1);
+  session.sel.sort(function (a, b) { return a - b; });
+  paintSel(); saveSession();
+}
+function selPhrase() {
+  if (!session || !session.sel.length) return '';
+  var words = wordList(), parts = [], prev = -2, cur = [];
+  session.sel.forEach(function (i) {
+    if (i !== prev + 1 && cur.length) { parts.push(cur.join(' ')); cur = []; }
+    cur.push(words[i]); prev = i;
+  });
+  if (cur.length) parts.push(cur.join(' '));
+  var s = parts.join(' ... ').replace(/^[^A-Za-z0-9]+|[,;:.!?"')(]+$/g, '').replace(/^["'(]+/, '');
+  return s.slice(0, 80);
+}
+function paintSel() {
+  var spans = document.querySelectorAll('#sess-text .w, #save-passage .w');
+  for (var i = 0; i < spans.length; i++) {
+    spans[i].classList.toggle('sel', session.sel.indexOf(+spans[i].dataset.i) !== -1);
+  }
+  var p = selPhrase(), h = $('held'), idx = session.idx || 0;
+  h.hidden = false;
+  if (p) { h.textContent = p; h.classList.remove('empty'); }
+  else if (idx === 0) { h.textContent = 'Tap a word that stays with you'; h.classList.add('empty'); }
+  else if (idx === 1) { h.textContent = 'Tap the word that keeps returning'; h.classList.add('empty'); }
+  else if (idx === 2) { h.textContent = 'Speak to God in your own words'; h.classList.add('empty'); }
+  else { h.textContent = ''; h.hidden = true; }
+}
+
+$('begin-btn').addEventListener('click', startSession);
+$('pause-btn').addEventListener('click', togglePause);
+$('next-btn').addEventListener('click', function () { advance(false); });
+$('end-btn').addEventListener('click', function () {
+  askConfirm('End this prayer time now? You can still save the word that stayed with you.', 'End and save', function () { finishSession(false); });
+});
+
+/* ============ save word flow ============ */
+function openSave() {
+  showScreen('save');
+  var mins = Math.max(1, Math.round(session.active / 60000));
+  $('save-summary').textContent = session.passage.label + ' \u00b7 ' + session.passage.ref + ' \u00b7 ' + mins + (mins === 1 ? ' minute' : ' minutes') + ' of prayer';
+  $('word-input').value = selPhrase();
+  $('note-input').value = '';
+  counts();
+  $('save-passage').innerHTML = versesHTML(session.passage.verses, true);
+  wireWordTaps($('save-passage'), function (i) { toggleSel(i); $('word-input').value = selPhrase(); counts(); });
+  paintSel();
+  window.scrollTo(0, 0);
+}
+function counts() { $('word-count').textContent = $('word-input').value.length; $('note-count').textContent = $('note-input').value.length; }
+$('word-input').addEventListener('input', counts);
+$('note-input').addEventListener('input', counts);
+function commitEntry(withWord) {
+  if (!session) return;
+  var word = withWord ? $('word-input').value.trim().slice(0, 80) : '';
+  var note = withWord ? $('note-input').value.trim().slice(0, 500) : '';
+  if (withWord && !word) { toast('Type or tap a word first, or save without one.'); $('word-input').focus(); return; }
+  var entry = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+    date: todayKey(), ts: Date.now(), forDate: session.viewKey,
+    ref: session.passage.ref, label: session.passage.label, source: session.passage.source,
+    word: word, note: note, minutes: Math.max(1, Math.round(session.active / 60000))
+  };
+  store.entries.push(entry); persist();
+  session = null; saveSession();
+  renderStreakNote();
+  toast(word ? 'Saved. Carry it with you today.' : 'Your prayer time is counted.');
+  selectTab('journal');
+}
+$('do-save').addEventListener('click', function () { commitEntry(true); });
+$('skip-save').addEventListener('click', function () { commitEntry(false); });
+
+/* ============ journal and streak ============ */
+function streakStats() {
+  var days = new Set(store.entries.map(function (e) { return e.date; }));
+  var t = todayKey(), cur = 0, k = days.has(t) ? t : addDays(t, -1);
+  while (days.has(k)) { cur++; k = addDays(k, -1); }
+  var sorted = Array.from(days).sort(), best = 0, run = 0, prev = null;
+  sorted.forEach(function (d) { run = prev && dayDiff(prev, d) === 1 ? run + 1 : 1; if (run > best) best = run; prev = d; });
+  var mins = store.entries.reduce(function (a, e) { return a + (e.minutes || 0); }, 0);
+  return { days: days, current: cur, best: best, total: store.entries.length, minutes: mins };
+}
+function renderJournal() {
+  var st = streakStats();
+  $('st-streak').textContent = st.current; $('st-best').textContent = st.best;
+  $('st-total').textContent = st.total; $('st-min').textContent = st.minutes;
+  var wk = $('week'); clearEl(wk);
+  var t = todayKey();
+  for (var i = 6; i >= 0; i--) {
+    var k = addDays(t, -i), d = document.createElement('div');
+    if (i === 0) d.className = 'today';
+    var lbl = fromKey(k).toLocaleDateString('en-US', { weekday:'short' });
+    d.innerHTML = '<i class="' + (st.days.has(k) ? 'on' : '') + '"></i>' + esc(lbl);
+    d.setAttribute('aria-label', shortDate(k) + (st.days.has(k) ? ', prayed' : ', not prayed'));
+    wk.appendChild(d);
+  }
+  var list = $('journal-list'); clearEl(list);
+  if (!store.entries.length) {
+    list.innerHTML = '<p class="empty-state">No words saved yet.<br>Pray the Gospel of the day and keep the word that stays with you.</p>';
+    return;
+  }
+  store.entries.slice().sort(function (a, b) { return b.ts - a.ts; }).forEach(function (e) {
+    var div = document.createElement('div'); div.className = 'entry';
+    div.innerHTML = '<div class="when">' + esc(shortDate(e.date)) + ' \u00b7 ' + (e.minutes || 0) + ' min</div>' +
+      (e.word ? '<div class="word">' + esc(e.word) + '</div>' : '<div class="word none">Prayed without a saved word</div>') +
+      '<div class="ref">' + esc(e.label || '') + (e.label ? ' \u00b7 ' : '') + esc(e.ref || '') + '</div>' +
+      (e.note ? '<p class="enote">' + esc(e.note) + '</p>' : '') +
+      '<div class="acts"><button type="button" class="linkish" data-del="' + esc(e.id) + '">Delete</button></div>';
+    list.appendChild(div);
+  });
+}
+$('journal-list').addEventListener('click', function (ev) {
+  var b = ev.target.closest ? ev.target.closest('[data-del]') : null;
+  if (!b) return;
+  var id = b.getAttribute('data-del');
+  askConfirm('Delete this journal entry? It also leaves your streak count.', 'Delete', function () {
+    store.entries = store.entries.filter(function (e) { return e.id !== id; });
+    persist(); renderJournal(); renderStreakNote(); toast('Entry deleted.');
+  });
+});
+
+/* ============ screens and tabs ============ */
+function showScreen(name) {
+  ['today', 'pray', 'save', 'journal'].forEach(function (n) { $('screen-' + n).hidden = n !== name; });
+}
+function selectTab(name) {
+  $('tab-today').setAttribute('aria-selected', String(name === 'today'));
+  $('tab-journal').setAttribute('aria-selected', String(name === 'journal'));
+  if (name === 'journal') renderJournal();
+  if (name === 'today') renderStreakNote();
+  showScreen(name);
+}
+$('tab-today').addEventListener('click', function () { selectTab('today'); });
+$('tab-journal').addEventListener('click', function () { selectTab('journal'); });
+
+/* ============ settings ============ */
+function renderDurs() {
+  var el = $('durs'); clearEl(el);
+  MOVES.forEach(function (m, i) {
+    var d = document.createElement('div'); d.className = 'dur';
+    d.innerHTML = '<div class="nm">' + esc(m.en) + ' \u00b7 ' + esc(m.name) + '</div><div class="stepper"><button type="button" aria-label="Shorter ' + esc(m.en) + '" data-d="' + i + '" data-v="-1">\u2212</button><output>' + S.durs[i] + '</output><button type="button" aria-label="Longer ' + esc(m.en) + '" data-d="' + i + '" data-v="1">+</button></div>';
+    el.appendChild(d);
+  });
+}
+$('durs').addEventListener('click', function (e) {
+  var b = e.target.closest ? e.target.closest('button[data-d]') : null; if (!b) return;
+  var i = +b.dataset.d; S.durs[i] = Math.max(1, Math.min(30, S.durs[i] + (+b.dataset.v)));
+  persist(); renderDurs(); renderPlan();
+});
+Array.prototype.forEach.call(document.querySelectorAll('[data-preset]'), function (b) {
+  b.addEventListener('click', function () { S.durs = b.dataset.preset.split(',').map(Number); persist(); renderDurs(); renderPlan(); toast('Lengths set to ' + b.textContent + '.'); });
+});
+function openSettings() {
+  renderDurs();
+  $('set-trans').value = S.trans; $('set-reading').value = S.reading;
+  $('set-chime').checked = !!S.chime; $('set-vol').value = S.vol; $('set-vibrate').checked = !!S.vibrate;
+  $('set-wake').checked = !!S.wake; $('set-auto').checked = !!S.auto;
+  $('settings').hidden = false; $('settings-done').focus();
+}
+function closeSettings() { $('settings').hidden = true; $('gear').focus(); }
+$('gear').addEventListener('click', openSettings);
+$('settings-done').addEventListener('click', closeSettings);
+$('settings').addEventListener('click', function (e) { if (e.target === this) closeSettings(); });
+$('set-trans').addEventListener('change', function () {
+  S.trans = this.value; persist();
+  if (!session && !$('screen-today').hidden && dayData && current && current.source === 'mass') loadPassage();
+});
+$('set-reading').addEventListener('change', function () { S.reading = this.value; persist(); });
+$('set-chime').addEventListener('change', function () { S.chime = this.checked; persist(); });
+$('set-vol').addEventListener('input', function () { S.vol = +this.value; persist(); });
+$('set-vibrate').addEventListener('change', function () { S.vibrate = this.checked; persist(); });
+$('set-wake').addEventListener('change', function () { S.wake = this.checked; persist(); if (session) { if (S.wake) requestWake(); else releaseWake(); } updateWakeNote(); });
+$('set-auto').addEventListener('change', function () { S.auto = this.checked; persist(); });
+$('test-chime').addEventListener('click', function () { audioUnlock(); var was = S.chime; S.chime = true; chime('start'); S.chime = was; });
+
+$('export-btn').addEventListener('click', function () {
+  var data = JSON.stringify({ app:'appaday-172-slow-word', version:1, exported:new Date().toISOString(), settings:S, entries:store.entries }, null, 2);
+  try {
+    var blob = new Blob([data], { type:'application/json' }), url = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = url; a.download = 'slow-word-backup-' + todayKey() + '.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+    toast('Backup downloaded.');
+  } catch (e) { toast('Download is not available here.'); }
+});
+$('import-btn').addEventListener('click', function () { $('import-file').click(); });
+$('import-file').addEventListener('change', function () {
+  var f = this.files && this.files[0]; this.value = '';
+  if (!f) return;
+  var r = new FileReader();
+  r.onload = function () {
+    try {
+      var d = JSON.parse(r.result);
+      if (!d || !Array.isArray(d.entries)) throw new Error('shape');
+      var have = new Set(store.entries.map(function (e) { return e.id; })), added = 0;
+      d.entries.forEach(function (e) {
+        if (!e || typeof e !== 'object' || !e.id || !/^\d{4}-\d{2}-\d{2}$/.test(e.date || '') || have.has(e.id)) return;
+        store.entries.push({ id:String(e.id), date:e.date, ts:+e.ts || Date.now(), forDate:e.forDate || e.date, ref:String(e.ref || ''), label:String(e.label || ''),
+          source:String(e.source || ''), word:String(e.word || '').slice(0, 80), note:String(e.note || '').slice(0, 500), minutes:Math.max(0, Math.min(300, +e.minutes || 0)) });
+        have.add(e.id); added++;
+      });
+      persist(); renderJournal(); renderStreakNote();
+      toast(added ? 'Restored ' + added + (added === 1 ? ' entry.' : ' entries.') : 'Nothing new to restore.');
+    } catch (e) { toast('That file is not a Slow Word backup.'); }
+  };
+  r.readAsText(f);
+});
+$('erase-btn').addEventListener('click', function () {
+  askConfirm('Erase every journal entry, your streak, and your settings on this device? Download a backup first if you want to keep them.', 'Erase all', function () {
+    removeKey(STORE_KEY); removeKey(CACHE_KEY); removeKey(SESSION_KEY);
+    store = { settings:{}, entries:[] }; cache = {}; session = null;
+    for (var key in DEFAULTS) store.settings[key] = Array.isArray(DEFAULTS[key]) ? DEFAULTS[key].slice() : DEFAULTS[key];
+    S = store.settings; persist();
+    closeSettings(); renderPlan(); selectTab('today'); loadDay(); toast('All data erased.');
+  });
+});
+
+/* ============ keyboard and lifecycle ============ */
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') {
+    if (!$('confirm').hidden) { $('confirm').hidden = true; confirmCb = null; }
+    else if (!$('settings').hidden) closeSettings();
+    return;
+  }
+  if (session && !$('screen-pray').hidden && e.target === document.body) {
+    if (e.key === ' ') { e.preventDefault(); togglePause(); }
+    else if (e.key === 'ArrowRight') advance(false);
+  }
+});
+document.addEventListener('visibilitychange', function () {
+  if (document.visibilityState === 'visible') {
+    if (session && !session.done) { tick(); if (!wakeLock || (wakeVideo && wakeVideo.paused)) requestWake(); }
+    if (!session && todayKeyAtLoad !== todayKey()) { todayKeyAtLoad = todayKey(); viewKey = todayKey(); loadDay(); }
+  } else if (session && !session.done) {
+    saveSession();
+  }
+});
+var todayKeyAtLoad = todayKey();
+
+/* ============ boot ============ */
+renderPlan(); renderStreakNote();
+var saved = readJSON(SESSION_KEY, null);
+if (saved && saved.passage && Array.isArray(saved.passage.verses) && Date.now() - saved.started < 3 * 3600000) {
+  session = saved; if (!Array.isArray(session.sel)) session.sel = [];
+  session.lastTick = Date.now();
+  if (session.done) openSave();
+  else {
+    /* resume: if the phone slept past the end of a movement, catch up without replaying every chime */
+    if (!session.paused && S.auto) {
+      while (session.endAt <= Date.now() && session.idx < MOVES.length - 1) {
+        session.idx++; session.left = moveMs(session.idx); session.endAt += session.left;
+      }
+    }
+    enterPray();
+    toast('Resumed your prayer time.');
+  }
+  document.body.addEventListener('pointerdown', function () { audioUnlock(); if (session && !session.done && !videoOn && !wakeLock) requestWake(); }, { once:true });
+} else {
+  removeKey(SESSION_KEY); session = null;
+}
+loadDay();
+})();
+</script>
+</body>
+</html>
